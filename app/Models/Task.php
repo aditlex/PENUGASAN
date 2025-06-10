@@ -14,6 +14,7 @@ class Task extends Model
         'title',
         'description',
         'is_completed',
+        'link',
         'due_date',
         'list_id'
     ];

@@ -9,7 +9,7 @@ use Inertia\Inertia;
 
 class TaskController extends Controller
 {
-    // 🧠 GET /tasks (list all tasks from all users)
+    // tasks
     public function index()
     {
         $query = Task::with('list')->orderBy('created_at', 'desc');
@@ -23,14 +23,13 @@ class TaskController extends Controller
             });
         }
 
-        // Filter by completion
+        // Filter
         if (request()->has('filter') && request('filter') !== 'all') {
             $query->where('is_completed', request('filter') === 'completed');
         }
 
         $tasks = $query->paginate(10);
 
-        // 🧠 All task lists, not just from logged-in user
         $lists = TaskList::with('user')->get();
 
         return Inertia::render('Tasks/Index', [
@@ -47,12 +46,13 @@ class TaskController extends Controller
         ]);
     }
 
-    // 🧠 POST /tasks
+    // POST /tasks
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'link' => 'required|string',
             'due_date' => 'nullable|date',
             'list_id' => 'required|exists:lists,id',
             'is_completed' => 'boolean'
@@ -63,7 +63,7 @@ class TaskController extends Controller
         return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
     }
 
-    // 🧠 PUT /tasks/{task}
+    // PUT /tasks/{task}
     public function update(Request $request, Task $task)
     {
         $validated = $request->validate([
@@ -79,7 +79,7 @@ class TaskController extends Controller
         return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
     }
 
-    // 🧠 DELETE /tasks/{task}
+    // DELETE /tasks/{task}
     public function destroy(Task $task)
     {
         $task->delete();

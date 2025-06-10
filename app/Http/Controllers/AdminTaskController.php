@@ -42,6 +42,7 @@ class AdminTaskController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'link' => 'required|string',
             'due_date' => 'nullable|date',
             'list_id' => 'required|exists:lists,id',
             'is_completed' => 'boolean'

@@ -13,11 +13,28 @@ class ListController extends Controller
      */
     public function index()
     {
-        // Ambil semua list, tanpa filter user_id
-        $lists = TaskList::with('tasks')->get();
+        // Mulai membangun query, jangan langsung dieksekusi dengan get()
+        $query = TaskList::with('tasks');
+
+        // Ambil nilai search dari request
+        $search = request('search');
+
+        // Jika ada nilai search, tambahkan kondisi where ke query
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        // Eksekusi query setelah semua kondisi ditambahkan
+        $lists = $query->get(); // Atau bisa juga $query->paginate(10); jika datanya banyak
 
         return Inertia::render('Lists/Index', [
-            'lists' => $lists,
+            'lists' => $lists, // Sekarang ini akan berisi data yang sudah difilter
+            'filters' => [
+                'search' => $search, // Mengembalikan nilai search ke frontend agar tetap ada di input
+            ],
             'flash' => [
                 'success' => session('success'),
                 'error' => session('error')
@@ -67,3 +84,4 @@ class ListController extends Controller
         return redirect()->route('admin')->with('success', 'List deleted successfully!');
     }
 }
+

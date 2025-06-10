@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
-import { Calendar, CheckCircle, CheckCircle2, ChevronLeft, ChevronRight, List, Pencil, Plus, Search, Trash2, XCircle } from 'lucide-react';
+import { Calendar, CheckCircle, CheckCircle2, ChevronLeft, ChevronRight, List, Pencil, Search, Trash2, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface Task {
@@ -15,6 +15,7 @@ interface Task {
     title: string;
     description: string | null;
     is_completed: boolean;
+    link: string;
     due_date: string | null;
     list_id: number;
     list: {
@@ -97,6 +98,7 @@ export default function TasksIndex({ tasks, lists, filters, flash }: Props) {
     } = useForm({
         title: '',
         description: '',
+        link: '',
         due_date: '',
         list_id: '',
         is_completed: false as boolean,
@@ -127,6 +129,7 @@ export default function TasksIndex({ tasks, lists, filters, flash }: Props) {
         setData({
             title: task.title,
             description: task.description || '',
+            link: task.link,
             due_date: task.due_date || '',
             list_id: task.list_id.toString(),
             is_completed: task.is_completed,
@@ -249,6 +252,16 @@ export default function TasksIndex({ tasks, lists, filters, flash }: Props) {
                                     </Select>{' '}
                                 </div>{' '}
                                 <div className="space-y-2">
+                                    <Label htmlFor="title">Link Tugas</Label>{' '}
+                                    <Input
+                                        id="link"
+                                        value={data.link}
+                                        onChange={(e) => setData('link', e.target.value)}
+                                        required
+                                        className="focus:ring-primary focus:ring-2"
+                                    />
+                                </div>
+                                <div className="space-y-2">
                                     <Label htmlFor="due_date">Due Date</Label>{' '}
                                     <Input
                                         id="due_date"
@@ -298,21 +311,34 @@ export default function TasksIndex({ tasks, lists, filters, flash }: Props) {
                                     <th className="text-muted-foreground h-12 px-4 text-left align-middle font-medium">Title</th>
                                     <th className="text-muted-foreground h-12 px-4 text-left align-middle font-medium">Description</th>
                                     <th className="text-muted-foreground h-12 px-4 text-left align-middle font-medium">List</th>
+                                    <th className="text-muted-foreground h-12 px-4 text-left align-middle font-medium">Link Tugas</th>
                                     <th className="text-muted-foreground h-12 px-4 text-left align-middle font-medium">Due Date</th>{' '}
                                     <th className="text-muted-foreground h-12 px-4 text-left align-middle font-medium">Status</th>{' '}
-                                    <th className="text-muted-foreground h-12 px-4 text-right align-middle font-medium">Actions</th>{' '}
+                                    <th className="text-muted-foreground h-12 px-8 text-right align-middle font-medium">Actions</th>{' '}
                                 </tr>{' '}
                             </thead>{' '}
                             <tbody className="[&_tr:last-child]:border-0">
                                 {tasks.data.map((task) => (
                                     <tr key={task.id} className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors">
                                         <td className="p-4 align-middle font-medium">{task.title}</td>
-                                        <td className="max-w-[450px] break-words p-4 align-middle">{task.description || 'No description'}</td>
+                                        <td className="max-w-[450px] p-4 align-middle break-words">{task.description || 'No description'}</td>
                                         <td className="p-4 align-middle">
                                             <div className="flex items-center gap-2">
                                                 <List className="text-muted-foreground h-4 w-4" />
                                                 {task.list.title}
                                             </div>
+                                        </td>
+                                        <td className="p-4 align-middle font-medium">
+                                            {task.link && (
+                                                <a
+                                                    href={task.link}
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer" 
+                                                    className="rounded bg-white px-4 py-2 font-bold text-black hover:bg-gray-500" 
+                                                >
+                                                    Link Tugas
+                                                </a>
+                                            )}
                                         </td>
                                         <td className="p-4 align-middle">
                                             {task.due_date ? (

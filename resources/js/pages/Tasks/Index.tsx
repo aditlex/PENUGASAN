@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
-import { Calendar, CheckCircle, CheckCircle2, ChevronLeft, ChevronRight, List, Pencil, Plus, Search, Trash2, XCircle } from 'lucide-react';
+import { Calendar, CheckCircle, CheckCircle2, ChevronLeft, ChevronRight, List, Plus, Search, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface Task {
@@ -15,6 +15,7 @@ interface Task {
     title: string;
     description: string | null;
     is_completed: boolean;
+    link: string;
     due_date: string | null;
     list_id: number;
     list: {
@@ -86,16 +87,10 @@ export default function TasksIndex({ tasks, lists, filters, flash }: Props) {
         }
     }, [showToast]);
 
-    const {
-        data,
-        setData,
-        post,
-        put,
-        processing,
-        reset,
-    } = useForm({
+    const { data, setData, post, put, processing, reset } = useForm({
         title: '',
         description: '',
+        link: '',
         due_date: '',
         list_id: '',
         is_completed: false as boolean,
@@ -232,6 +227,16 @@ export default function TasksIndex({ tasks, lists, filters, flash }: Props) {
                                     </Select>{' '}
                                 </div>{' '}
                                 <div className="space-y-2">
+                                    <Label htmlFor="title">Link Projek</Label>{' '}
+                                    <Input
+                                        id="link"
+                                        value={data.link}
+                                        onChange={(e) => setData('link', e.target.value)}
+                                        required
+                                        className="focus:ring-primary focus:ring-2"
+                                    />
+                                </div>
+                                <div className="space-y-2">
                                     <Label htmlFor="due_date">Due Date</Label>{' '}
                                     <Input
                                         id="due_date"
@@ -247,10 +252,11 @@ export default function TasksIndex({ tasks, lists, filters, flash }: Props) {
                                         id="is_completed"
                                         checked={data.is_completed}
                                         onChange={(e) => setData('is_completed', e.target.checked)}
-                                        className="focus:ring-primary h-4 w-4 rounded border-gray-300 focus:ring-2"
+                                        className="focus:ring-primary h-4 w-4 cursor-not-allowed rounded border-gray-300 opacity-50 focus:ring-2"
+                                        disabled
                                     />
                                     <Label htmlFor="is_completed">Completed</Label>{' '}
-                                </div>{' '}
+                                </div>
                                 <Button type="submit" disabled={processing} className="bg-primary hover:bg-primary/90 w-full shadow-lg">
                                     {editingTask ? 'Update' : 'Create'}
                                 </Button>
@@ -289,7 +295,7 @@ export default function TasksIndex({ tasks, lists, filters, flash }: Props) {
                                 {tasks.data.map((task) => (
                                     <tr key={task.id} className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors">
                                         <td className="p-4 align-middle font-medium">{task.title}</td>
-                                        <td className="max-w-[450px] break-words p-4 align-middle">{task.description || 'No description'}</td>
+                                        <td className="max-w-[450px] p-4 align-middle break-words">{task.description || 'No description'}</td>
                                         <td className="p-4 align-middle">
                                             <div className="flex items-center gap-2">
                                                 <List className="text-muted-foreground h-4 w-4" />

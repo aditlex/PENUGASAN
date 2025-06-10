@@ -1,13 +1,9 @@
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
-import { CheckCircle2, Pencil, Plus, Trash2, XCircle } from 'lucide-react';
+import { Head, router, useForm } from '@inertiajs/react';
+import { CheckCircle2, Pencil, Plus, Search, Trash2, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface List {
@@ -19,6 +15,9 @@ interface List {
 
 interface Props {
     lists: List[];
+    filters: {
+        search: string;
+    };
     flash?: {
         success?: string;
         error?: string;
@@ -32,11 +31,10 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-// ...import tetap sama
-
-export default function ListsIndex({ lists, flash }: Props) {
+export default function ListsIndex({ lists, filters, flash }: Props) {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
+    const [searchTerm, setSearchTerm] = useState(filters.search);
     const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
     useEffect(() => {
@@ -54,10 +52,32 @@ export default function ListsIndex({ lists, flash }: Props) {
         }
     }, [showToast]);
 
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            router.get(
+                route('lists.index'),
+                {
+                    search: searchTerm,
+                },
+                {
+                    preserveState: true,  
+                    preserveScroll: true,
+                    replace: true,       
+                },
+            );
+        }, 300);
+
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [searchTerm]); 
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Lists" />
             <div className="flex flex-col gap-4 p-4">
+                {/* Toast Notification */}
                 {showToast && (
                     <div
                         className={`fixed top-4 right-4 z-50 flex items-center gap-2 rounded-lg p-4 shadow-lg text-white ${
@@ -71,6 +91,20 @@ export default function ListsIndex({ lists, flash }: Props) {
 
                 <h1 className="text-2xl font-bold">Lists</h1>
 
+
+                <div className="mb-4 flex gap-4">
+                    <div className="relative flex-1"> 
+                        <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
+                        <Input
+                            placeholder="Search list..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-10"
+                        />
+                    </div>
+                </div>
+
+                {/* List Cards */}
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {lists.map((list) => (
                         <Card key={list.id} className="hover:bg-accent/50 transition-colors">
