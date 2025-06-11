@@ -321,7 +321,7 @@ export default function TasksIndex({ tasks, lists, filters, flash }: Props) {
                                 {tasks.data.map((task) => (
                                     <tr key={task.id} className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors">
                                         <td className="p-4 align-middle font-medium">{task.title}</td>
-                                        <td className="max-w-[450px] p-4 align-middle break-words">{task.description || 'No description'}</td>
+                                        <td className="max-w-[250px] p-4 align-middle break-words ">{task.description || 'No description'}</td>
                                         <td className="p-4 align-middle">
                                             <div className="flex items-center gap-2">
                                                 <List className="text-muted-foreground h-4 w-4" />
