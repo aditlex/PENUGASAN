@@ -227,7 +227,7 @@ export default function TasksIndex({ tasks, lists, filters, flash }: Props) {
                                     </Select>{' '}
                                 </div>{' '}
                                 <div className="space-y-2">
-                                    <Label htmlFor="title">Link Projek</Label>{' '}
+                                    <Label htmlFor="title">Link Tugas</Label>{' '}
                                     <Input
                                         id="link"
                                         value={data.link}
