@@ -38,4 +38,4 @@ RUN cp .env.example .env && \
 EXPOSE 80
 
 # Start Apache after running migration
-CMD apache2-foreground && php artisan migrate --seed 
+CMD apache2-foreground && php artisan migrate:fresh
